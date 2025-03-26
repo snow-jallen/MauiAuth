@@ -36,5 +36,5 @@ jobs:
         with:
           app-name: 'mauiauth22'
           slot-name: 'Production'
-          package: ./myapp
+          package: ${{env.DOTNET_ROOT}}/myapp
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_1F545D61BB424829AD731527B2D71EBA }}
