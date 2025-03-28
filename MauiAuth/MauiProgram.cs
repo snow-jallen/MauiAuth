@@ -6,42 +6,54 @@ namespace MauiAuth;
 
 public static class MauiProgram
 {
-	public static MauiApp CreateMauiApp()
-	{
-		var builder = MauiApp.CreateBuilder();
-		builder
-			.UseMauiApp<App>()
-			.UseMauiCommunityToolkit()
-			.ConfigureSyncfusionToolkit()
-			.ConfigureMauiHandlers(handlers =>
-			{
-			})
-			.ConfigureFonts(fonts =>
-			{
-				fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
-				fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
-				fonts.AddFont("SegoeUI-Semibold.ttf", "SegoeSemibold");
-				fonts.AddFont("FluentSystemIcons-Regular.ttf", FluentUI.FontFamily);
-			});
+    public static MauiApp CreateMauiApp()
+    {
+        var builder = MauiApp.CreateBuilder();
+        builder
+            .UseMauiApp<App>()
+            .UseMauiCommunityToolkit()
+            .ConfigureSyncfusionToolkit()
+            .ConfigureMauiHandlers(handlers =>
+            {
+            })
+            .ConfigureFonts(fonts =>
+            {
+                fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
+                fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
+                fonts.AddFont("SegoeUI-Semibold.ttf", "SegoeSemibold");
+                fonts.AddFont("FluentSystemIcons-Regular.ttf", FluentUI.FontFamily);
+            });
 
 #if DEBUG
-		builder.Logging.AddDebug();
-		builder.Services.AddLogging(configure => configure.AddDebug());
+        builder.Logging.AddDebug();
+        builder.Services.AddLogging(configure => configure.AddDebug());
 #endif
 
-		builder.Services.AddSingleton<ProjectRepository>();
-		builder.Services.AddSingleton<TaskRepository>();
-		builder.Services.AddSingleton<CategoryRepository>();
-		builder.Services.AddSingleton<TagRepository>();
-		builder.Services.AddSingleton<SeedDataService>();
-		builder.Services.AddSingleton<ModalErrorHandler>();
-		builder.Services.AddSingleton<MainPageModel>();
-		builder.Services.AddSingleton<ProjectListPageModel>();
-		builder.Services.AddSingleton<ManageMetaPageModel>();
+        builder.Services.AddSingleton<ProjectRepository>();
+        builder.Services.AddSingleton<TaskRepository>();
+        builder.Services.AddSingleton<CategoryRepository>();
+        builder.Services.AddSingleton<TagRepository>();
+        builder.Services.AddSingleton<SeedDataService>();
+        builder.Services.AddSingleton<ModalErrorHandler>();
+        builder.Services.AddSingleton<MainPageModel>();
+        builder.Services.AddSingleton<ProjectListPageModel>();
+        builder.Services.AddSingleton<ManageMetaPageModel>();
 
-		builder.Services.AddTransientWithShellRoute<ProjectDetailPage, ProjectDetailPageModel>("project");
-		builder.Services.AddTransientWithShellRoute<TaskDetailPage, TaskDetailPageModel>("task");
-		
-		return builder.Build();
-	}
+        builder.Services.AddTransientWithShellRoute<ProjectDetailPage, ProjectDetailPageModel>("project");
+        builder.Services.AddTransientWithShellRoute<TaskDetailPage, TaskDetailPageModel>("task");
+
+        var oktaClientConfiguration = new OktaClientConfiguration()
+        {
+            //Verify by adding .well-known/openid-configuration to the URL
+            Domain = "https://engineering.snow.edu/auth/realms/SnowCollege/",
+            ClientId = "JonathanMauiAuth",
+            RedirectUri = "myapp://callback",
+            Browser = new WebBrowserAuthenticator()
+        };
+
+        builder.Services.AddSingleton(new KeycloakClient(oktaClientConfiguration));
+        builder.Services.AddSingleton<ApiService>();
+
+        return builder.Build();
+    }
 }
