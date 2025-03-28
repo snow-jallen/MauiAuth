@@ -22,7 +22,12 @@ public class ApiService
         httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", keycloakClient.IdentityToken);
 
         var response = await httpClient.GetAsync(endpoint);
-        return await response.Content.ReadAsStringAsync();
+        if (response.IsSuccessStatusCode)
+        {
+            return await response.Content.ReadAsStringAsync();
+        }
+
+        return response.ToString();
     }
 
     public async Task<string> GetAsyncWithoutAuthorization(string endpoint)
@@ -30,6 +35,11 @@ public class ApiService
         httpClient.DefaultRequestHeaders.Clear();
 
         var response = await httpClient.GetAsync(endpoint);
-        return await response.Content.ReadAsStringAsync();
+        if (response.IsSuccessStatusCode)
+        {
+            return await response.Content.ReadAsStringAsync();
+        }
+
+        return response.ToString();
     }
 }

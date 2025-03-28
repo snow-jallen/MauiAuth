@@ -14,6 +14,12 @@ public partial class MainPage : ContentPage
         InitializeComponent();
         _oktaClient = oktaClient;
         this.apiService = apiService;
+        Loaded += OnLoaded;
+    }
+
+    private async void OnLoaded(object? sender, EventArgs e)
+    {
+        Application.Current!.UserAppTheme = AppTheme.Light;
     }
 
     private void OnCounterClicked(object sender, EventArgs e)
@@ -72,6 +78,13 @@ public partial class MainPage : ContentPage
 
     private async void callApiWithoutAuth(object sender, EventArgs e)
     {
-        lblApiResults.Text = await apiService.GetAsyncWithoutAuthorization("weatherforecast");
+        try
+        {
+            lblApiResults.Text = await apiService.GetAsyncWithoutAuthorization("weatherforecast");
+        }
+        catch (Exception ex)
+        {
+            lblApiResults.Text = ex.ToString();
+        }
     }
 }
